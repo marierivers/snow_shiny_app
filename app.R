@@ -23,6 +23,7 @@ ui <- fluidPage(
   )
 )
 
+
 # create 'server'
 # the server is a function that takes in inputs which are going to be the things that the user selects and then it's going to send back outputs which the user can see.
 server <- function(input, output) {
