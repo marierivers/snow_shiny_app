@@ -13,36 +13,46 @@ ca_stations <- read_csv("ca_stations.csv")
 
 # create 'ui' = "User Interface"
 # widgets are things that the user interacts with to make decisions about what they want to appear as outputs
-ui <- fluidPage(
-  titlePanel("California Snow Data"),
-  sidebarLayout(
-    # sidebarPanel is where you put your widgets
-    sidebarPanel("here are my widgets: user selection options", 
-                 radioButtons(inputId = "site", 
-                              label = "chose a site:",
-                              choices = c("bunkerhill", "pliocenrdg", "babbittpk" = "babbittpk_", "martispeak", "schoolhous", "buzzardrst", "mazourkapk", "mt gleason" = "mt_gleason", "grapevine" = "grapevine_", "chileoflat", "laurel creek" = "laurel_crk", "pumicevall", "mono mills" = "mono_mills", "sagehenmdw", "owensgorge", "fossiltilt", "cratermark", "granitemtn", "blindsprin", "conwayroad", "lvmanzlake", "ballardrdg")),
-                 selectInput(inputId = "color_select",
-                             label = "select a color",
-                             choices = c("fav red" = "red", 
-                                         "pretty purple" = "purple",
-                                         "ooorange" = "orange")),
-                 checkboxGroupInput(inputId = "wy_select", label = "select water years",
-                                    choices = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017),
-                                    selected = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017))),
-    mainPanel("use this map to find the name of a site near your water supply",
-              leafletOutput(outputId = "site_map"),
-              "here is my graph",
-              tabsetPanel(
-                tabPanel("running total", plotOutput(outputId = "snow_plot")),
-                tabPanel("mix/max"),
-                tabPanel("snow depth", plotOutput(outputId = "depth_plot"))))
-  )
+ui <- navbarPage("nav bar",
+                 tabPanel("first tab",
+                          h1("some giant text"),
+                          p("use this map to find the name of a site near your water supply"),
+                          leafletOutput(outputId = "site_map1")),
+                 tabPanel("second tab",
+                          sidebarLayout(
+                            # sidebarPanel is where you put your widgets
+                            sidebarPanel("here are my widgets: user selection options", 
+                                         radioButtons(inputId = "site", 
+                                                      label = "chose a site:",
+                                                      choices = c("bunkerhill", "pliocenrdg", "babbittpk" = "babbittpk_", "martispeak", "schoolhous", "buzzardrst", "mazourkapk", "mt gleason" = "mt_gleason", "grapevine" = "grapevine_", "chileoflat", "laurel creek" = "laurel_crk", "pumicevall", "mono mills" = "mono_mills", "sagehenmdw", "owensgorge", "fossiltilt", "cratermark", "granitemtn", "blindsprin", "conwayroad", "lvmanzlake", "ballardrdg")),
+                                         # selectInput(inputId = "color_select",
+                                         #             label = "select a color",
+                                         #             choices = c("fav red" = "red", 
+                                         #                         "pretty purple" = "purple",
+                                         #                         "ooorange" = "orange")),
+                                         checkboxGroupInput(inputId = "wy_select", label = "select water years",
+                                                            choices = levels(as.factor(california$water_year)),
+                                                            selected = levels(as.factor(california$water_year)))),
+                            mainPanel("use this map to find the name of a site near your water supply",
+                                      leafletOutput(outputId = "site_map2"),
+                                      "here is my graph",
+                                      tabsetPanel(
+                                        tabPanel("running total", plotOutput(outputId = "snow_plot")),
+                                        tabPanel("mix/max"),
+                                        tabPanel("snow depth", plotOutput(outputId = "depth_plot"))))
+                          )
+                          ),
+                 tabPanel("the data",
+                          p("something with a date input or date range slider" ))
+  
 )
 
 
 # create 'server'
 # the server is a function that takes in inputs which are going to be the things that the user selects and then it's going to send back outputs which the user can see.
 server <- function(input, output) {
+  
+  
   
   # created a reactive dataframe that depends on the selection made in the site widget
   site_select <- reactive({
@@ -76,7 +86,7 @@ server <- function(input, output) {
            x = NULL, y = "total snow (m)", color = "water year")
   })
   
-  output$site_map <- renderLeaflet({
+  output$site_map1 <- renderLeaflet({
     leaflet() %>% 
       addProviderTiles(providers$Stamen.TonerLite,
                        options = providerTileOptions(noWrap = TRUE)
@@ -84,6 +94,13 @@ server <- function(input, output) {
       addMarkers(data = ca_stations, lat = ~latitude, lng = ~longitude, popup = ~site_name)
   })
   
+  output$site_map2 <- renderLeaflet({
+    leaflet(options = leafletOptions(minZoom = 5, maxZoom = 20)) %>% 
+      addProviderTiles(providers$Stamen.TonerLite,
+                       options = providerTileOptions(noWrap = TRUE, minZoom = 5, maxZoom = 20)) %>% 
+      addMarkers(data = site_select(), lat = ~latitude, lng = ~longitude, popup = ~site_name, 
+                 options = markerOptions(minZoom = 5, maxZoom = 20))
+  })
   
 }
 
