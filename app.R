@@ -4,9 +4,12 @@
 library(shiny)
 library(tidyverse)
 library(paletteer)
+library(shinythemes)
+library(leaflet)
 
 # load data
 california <- read_csv("california_snow_data.csv")
+ca_stations <- read_csv("ca_stations.csv")
 
 # create 'ui' = "User Interface"
 # widgets are things that the user interacts with to make decisions about what they want to appear as outputs
@@ -17,9 +20,22 @@ ui <- fluidPage(
     sidebarPanel("here are my widgets: user selection options", 
                  radioButtons(inputId = "site", 
                               label = "chose a site:",
-                              choices = c("bunkerhill", "pliocenrdg", "babbittpk" = "babbittpk_", "martispeak", "schoolhous", "buzzardrst", "mazourkapk", "mt gleason" = "mt_gleason", "grapevine" = "grapevine_", "chileoflat", "laurel creek" = "laurel_crk", "pumicevall", "mono mills" = "mono_mills", "sagehenmdw", "owensgorge", "fossiltilt", "cratermark", "granitemtn", "blindsprin", "conwayroad", "lvmanzlake", "ballardrdg"))),
-    mainPanel("here is my graph", 
-              plotOutput(outputId = "snow_plot"))
+                              choices = c("bunkerhill", "pliocenrdg", "babbittpk" = "babbittpk_", "martispeak", "schoolhous", "buzzardrst", "mazourkapk", "mt gleason" = "mt_gleason", "grapevine" = "grapevine_", "chileoflat", "laurel creek" = "laurel_crk", "pumicevall", "mono mills" = "mono_mills", "sagehenmdw", "owensgorge", "fossiltilt", "cratermark", "granitemtn", "blindsprin", "conwayroad", "lvmanzlake", "ballardrdg")),
+                 selectInput(inputId = "color_select",
+                             label = "select a color",
+                             choices = c("fav red" = "red", 
+                                         "pretty purple" = "purple",
+                                         "ooorange" = "orange")),
+                 checkboxGroupInput(inputId = "wy_select", label = "select water years",
+                                    choices = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017),
+                                    selected = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017))),
+    mainPanel("use this map to find the name of a site near your water supply",
+              leafletOutput(outputId = "site_map"),
+              "here is my graph",
+              tabsetPanel(
+                tabPanel("running total", plotOutput(outputId = "snow_plot")),
+                tabPanel("mix/max"),
+                tabPanel("snow depth", plotOutput(outputId = "depth_plot"))))
   )
 )
 
@@ -31,7 +47,9 @@ server <- function(input, output) {
   # created a reactive dataframe that depends on the selection made in the site widget
   site_select <- reactive({
     california %>% 
-      filter(site_name == input$site)})
+      filter(site_name == input$site) %>% 
+      filter(water_year %in% c(input$wy_select))
+    })
   
   output$snow_plot <- renderPlot({
     
@@ -45,6 +63,26 @@ server <- function(input, output) {
       labs(title = "total snow accumulation per water year", subtitle = input$site,
            x = NULL, y = "total snow (m)", color = "water year")
     })
+  
+  output$depth_plot <- renderPlot({
+    # if the data that you are using is a reactive dataframe then you have to add () after data = df()
+    ggplot(data = site_select(), aes(x = day_of_wy, y = snow_depth_m)) +
+      geom_line(aes(color = as.factor(water_year)), size = 1) +
+      scale_x_continuous(breaks = c(1, 32, 62, 93, 124, 152, 183, 213, 244, 275),
+                         labels = c("Oct 01", "Nov 01", "Dec 01", "Jan 01", "Feb 01", "Mar 01", "Apr 01", "May 01", "Jun 01", "Jul 01")) +
+      #scale_colour_paletteer_d("khroma::smooth_rainbow") +
+      theme(legend.position = "bottom") +
+      labs(title = "total snow accumulation per water year", subtitle = input$site,
+           x = NULL, y = "total snow (m)", color = "water year")
+  })
+  
+  output$site_map <- renderLeaflet({
+    leaflet() %>% 
+      addProviderTiles(providers$Stamen.TonerLite,
+                       options = providerTileOptions(noWrap = TRUE)
+                       ) %>% 
+      addMarkers(data = ca_stations, lat = ~latitude, lng = ~longitude, popup = ~site_name)
+  })
   
   
 }
