@@ -6,6 +6,7 @@ library(tidyverse)
 library(paletteer)
 library(shinythemes)
 library(leaflet)
+library(DT)
 
 # load data
 california <- read_csv("california_snow_data.csv")
@@ -13,7 +14,11 @@ ca_stations <- read_csv("ca_stations.csv")
 
 # create 'ui' = "User Interface"
 # widgets are things that the user interacts with to make decisions about what they want to appear as outputs
-ui <- navbarPage("nav bar",
+ui <- fluidPage(
+  navbarPage("California Snow Data",
+             #theme = "theme_mtr.css",
+             theme = shinytheme("cerulean"),
+             #theme = shinytheme("cyborg"),
                  tabPanel("first tab",
                           h1("some giant text"),
                           p("use this map to find the name of a site near your water supply"),
@@ -43,9 +48,11 @@ ui <- navbarPage("nav bar",
                           )
                           ),
                  tabPanel("the data",
-                          p("something with a date input or date range slider" ))
+                          p("something with a date input or date range slider" ),
+                          # data table
+                          DT::dataTableOutput(outputId = "california_data"))
   
-)
+))
 
 
 # create 'server'
@@ -100,6 +107,16 @@ server <- function(input, output) {
                        options = providerTileOptions(noWrap = TRUE, minZoom = 5, maxZoom = 20)) %>% 
       addMarkers(data = site_select(), lat = ~latitude, lng = ~longitude, popup = ~site_name, 
                  options = markerOptions(minZoom = 5, maxZoom = 20))
+  })
+  
+  # render the california data table
+  output$california_data <- DT::renderDataTable({
+    DT::datatable(california,
+                  options = list(pageLength = 50),
+                  caption = tags$caption(
+                    style = 'caption-side: top; text-align: left;',
+                    'Table 1: ', tags$em('the data')
+                  ))
   })
   
 }
