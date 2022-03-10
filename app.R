@@ -52,9 +52,9 @@ ui <- fluidPage(
                                                             choices = levels(as.factor(california$water_year)),
                                                             selected = 2017)),
                                                             #selected = levels(as.factor(california$water_year)))),
-                            mainPanel("use this map to find the name of a site near your water supply",
+                            mainPanel("",
                                       leafletOutput(outputId = "site_map2"),
-                                      "here is my graph",
+                                      "",
                                       tabsetPanel(
                                         tabPanel("snow depth: daily fluctuation", plotOutput(outputId = "depth_plot")),
                                         tabPanel("snow depth: running total", plotOutput(outputId = "snow_plot")),
@@ -64,7 +64,7 @@ ui <- fluidPage(
                           )
                           ),
                  tabPanel("data table",
-                          p("something with a date input or date range slider" ),
+                          p("" ),
                           # data table
                           DT::dataTableOutput(outputId = "california_data"),
                           p("Citation: Larson, K. M. and E. E. Small. 2017. Daily Snow Depth and SWE from GPS Signal-to-Noise Ratios, Version 1. [Indicate subset used]. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. doi: https://doi.org/10.5067/Z02Y1HGNFXCH. [Date Accessed]."))
