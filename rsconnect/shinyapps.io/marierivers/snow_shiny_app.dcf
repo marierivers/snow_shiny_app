@@ -5,9 +5,9 @@ account: marierivers
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 5802990
-bundleId: 5665117
+bundleId: 5668045
 url: https://marierivers.shinyapps.io/snow_shiny_app/
-when: 1646895556.79856
-lastSyncTime: 1646895556.79859
+when: 1646942441.21848
+lastSyncTime: 1646942441.2185
 asMultiple: FALSE
 asStatic: FALSE

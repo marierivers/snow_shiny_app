@@ -7,6 +7,7 @@ library(paletteer)
 library(shinythemes)
 library(leaflet)
 library(DT)
+library(ggrepel)
 
 epsg2163 <- leafletCRS(
   crsClass = "L.Proj.CRS",
@@ -85,6 +86,12 @@ server <- function(input, output) {
       filter(water_year %in% c(input$wy_select))
     })
   
+  site_select_2017_2015 <- reactive({
+    california %>% 
+      filter(site_name == input$site) %>% 
+      filter(water_year %in% c(2015, 2017))
+  })
+  
   # create a reactive dataframe of annual snow totals based on selected site
   annual_totals <- reactive({
     california %>% 
@@ -93,8 +100,16 @@ server <- function(input, output) {
       summarise(total_snow_wy_m = max(running_wy_snow_accumulation_m)) %>% 
       filter(water_year %in% c(input$wy_select))
   })
+  
+  # reactive dataframe for action thresholds
+  action_thresholds <- reactive({
+    california %>% 
+      filter(site_name == input$site) %>% 
+      group_by(water_year) %>% 
+      summarise(total_snow_wy_m = max(running_wy_snow_accumulation_m))
+  })
 
-  # running total of accumulated snow
+  # running total of accumulated snow  
   output$snow_plot <- renderPlot({
       # if the data that you are using is a reactive dataframe then you have to add () after data = df()
         ggplot(data = site_select(), aes(x = day_of_wy, y = running_wy_snow_accumulation_m)) +
@@ -105,7 +120,13 @@ server <- function(input, output) {
       theme(legend.position = "bottom") +
       labs(title = "total snow accumulation per water year", subtitle = input$site,
            x = NULL, y = "total snow (m)", color = "water year") +
-      theme(text = element_text(size = 18))
+      theme(text = element_text(size = 18)) +
+      geom_label(aes(label = water_year), 
+                 data = site_select() %>% 
+                   group_by(water_year) %>% 
+                   filter(water_year %in% c(2015, 2017)) %>% 
+                   filter(day_of_wy == max(day_of_wy)),
+                 nudge_x = 1)
     })
   
   # daily change in snow depth
@@ -129,13 +150,11 @@ server <- function(input, output) {
       labs(title = "Total accumulated snow per water year",
            x = "water year", y = "total snow depth (m)") +
       theme(text = element_text(size = 18)) +
-      geom_hline(yintercept = median(annual_totals()$total_snow_wy_m), linetype = "dashed", color = "black", size = 1) +
-      geom_label(aes(x = .5, y = median(annual_totals()$total_snow_wy_m) + .2, label = "activate groundwater supply"), color = "black", fill = "white", size = 6, hjust = 0) +
-      geom_hline(yintercept = quantile(annual_totals()$total_snow_wy_m, c(0.25)), linetype = "dashed", color = "red", size = 2) +
-      geom_label(aes(x = .5, y = quantile(annual_totals()$total_snow_wy_m, c(0.25)) + .2, label = "implement water conservation measures"), color = "red", fill = "white", size = 6, hjust = 0)
-      #annotate("text", x = .5, y = quantile(annual_totals()$total_snow_wy_m, c(0.25)) + .2, label = "implement water conservation measures", color = "red", size = 6, hjust = 0)
+      geom_hline(yintercept = median(action_thresholds()$total_snow_wy_m), linetype = "dashed", color = "black", size = 1) +
+      geom_label(aes(x = .5, y = median(action_thresholds()$total_snow_wy_m) + .2, label = "activate groundwater supply"), color = "black", fill = "white", size = 6, hjust = 0) +
+      geom_hline(yintercept = quantile(action_thresholds()$total_snow_wy_m, c(0.25)), linetype = "dashed", color = "red", size = 2) +
+      geom_label(aes(x = .5, y = quantile(action_thresholds()$total_snow_wy_m, c(0.25)) + .2, label = "implement water conservation measures"), color = "red", fill = "white", size = 6, hjust = 0)
   })
-  
   
   # map of all sites
   output$site_map1 <- renderLeaflet({
