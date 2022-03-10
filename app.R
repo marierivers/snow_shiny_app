@@ -8,6 +8,11 @@ library(shinythemes)
 library(leaflet)
 library(DT)
 
+epsg2163 <- leafletCRS(
+  crsClass = "L.Proj.CRS",
+  code = "EPSG:2163",
+  proj4def = "+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +a=6370997 +b=6370997 +units=m +no_defs",
+  resolutions = 2^(16:7))
 
 # load data
 california <- read_csv("california_snow_data.csv")
@@ -45,14 +50,15 @@ ui <- fluidPage(
                                          #                         "ooorange" = "orange")),
                                          checkboxGroupInput(inputId = "wy_select", label = "select water years",
                                                             choices = levels(as.factor(california$water_year)),
-                                                            selected = levels(as.factor(california$water_year)))),
+                                                            selected = 2017)),
+                                                            #selected = levels(as.factor(california$water_year)))),
                             mainPanel("use this map to find the name of a site near your water supply",
                                       leafletOutput(outputId = "site_map2"),
                                       "here is my graph",
                                       tabsetPanel(
+                                        tabPanel("snow depth: daily fluctuation", plotOutput(outputId = "depth_plot")),
                                         tabPanel("snow depth: running total", plotOutput(outputId = "snow_plot")),
                                         #tabPanel("mix/max"),
-                                        tabPanel("snow depth: daily fluctuation", plotOutput(outputId = "depth_plot")),
                                         tabPanel("snow depth: annual total", plotOutput(outputId = "wy_total_bar_chart"))),
                                       p("Citation: Larson, K. M. and E. E. Small. 2017. Daily Snow Depth and SWE from GPS Signal-to-Noise Ratios, Version 1. [Indicate subset used]. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. doi: https://doi.org/10.5067/Z02Y1HGNFXCH. [Date Accessed]."))
                           )
@@ -98,7 +104,8 @@ server <- function(input, output) {
       #scale_colour_paletteer_d("khroma::smooth_rainbow") +
       theme(legend.position = "bottom") +
       labs(title = "total snow accumulation per water year", subtitle = input$site,
-           x = NULL, y = "total snow (m)", color = "water year")
+           x = NULL, y = "total snow (m)", color = "water year") +
+      theme(text = element_text(size = 18))
     })
   
   # daily change in snow depth
@@ -111,24 +118,32 @@ server <- function(input, output) {
       #scale_colour_paletteer_d("khroma::smooth_rainbow") +
       theme(legend.position = "bottom") +
       labs(title = "total snow accumulation per water year", subtitle = input$site,
-           x = NULL, y = "total snow (m)", color = "water year")
+           x = NULL, y = "snow depth (m)", color = "water year") +
+      theme(text = element_text(size = 18))
   })
   
   # bar chart of total snow per water year
   output$wy_total_bar_chart <- renderPlot({
-    ggplot(data = annual_totals(), aes(x = water_year, y = total_snow_wy_m)) +
+    ggplot(data = annual_totals(), aes(x = factor(water_year), y = total_snow_wy_m)) +
       geom_col(fill = "blue") +
       labs(title = "Total accumulated snow per water year",
-           x = "water year", y = "total snow depth (m)")
+           x = "water year", y = "total snow depth (m)") +
+      theme(text = element_text(size = 18)) +
+      geom_hline(yintercept = median(annual_totals()$total_snow_wy_m), linetype = "dashed", color = "black", size = 1) +
+      geom_label(aes(x = .5, y = median(annual_totals()$total_snow_wy_m) + .2, label = "activate groundwater supply"), color = "black", fill = "white", size = 6, hjust = 0) +
+      geom_hline(yintercept = quantile(annual_totals()$total_snow_wy_m, c(0.25)), linetype = "dashed", color = "red", size = 2) +
+      geom_label(aes(x = .5, y = quantile(annual_totals()$total_snow_wy_m, c(0.25)) + .2, label = "implement water conservation measures"), color = "red", fill = "white", size = 6, hjust = 0)
+      #annotate("text", x = .5, y = quantile(annual_totals()$total_snow_wy_m, c(0.25)) + .2, label = "implement water conservation measures", color = "red", size = 6, hjust = 0)
   })
   
   
   # map of all sites
   output$site_map1 <- renderLeaflet({
     leaflet() %>% 
-      addProviderTiles(providers$Stamen.TonerLite,
-                       options = providerTileOptions(noWrap = TRUE)
-                       ) %>% 
+      addProviderTiles(providers$OpenStreetMap) %>% 
+      # addProviderTiles(providers$Stamen.TonerLite,
+      #                  options = providerTileOptions(noWrap = TRUE)
+      #                  ) %>% 
       addMarkers(data = ca_stations, lat = ~latitude, lng = ~longitude, label = ~site_name)
   })
   
@@ -136,8 +151,7 @@ server <- function(input, output) {
   output$site_map2 <- renderLeaflet({
     leaflet() %>% 
       setView(lat = 38, lng = -120, zoom = 5.25) %>% 
-      addProviderTiles(providers$Stamen.TonerLite,
-                       options = providerTileOptions(noWrap = TRUE)) %>% 
+      addProviderTiles(providers$OpenStreetMap) %>% 
       addMarkers(data = site_select(), lat = ~latitude, lng = ~longitude, popup = ~site_name)
     #addMarkers(data = site_select(), lat = ~latitude, lng = ~longitude, popup = ~site_name, options = markerOptions(minZoom = 5, maxZoom = 20))
   })
