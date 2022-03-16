@@ -31,8 +31,8 @@ ui <- fluidPage(
              theme = shinytheme("cerulean"),
              #theme = shinytheme("cyborg"),
                  tabPanel("site locations",
-                          h1("Daily Snow Depth Stations"),
-                          h6("This map shows California sites that contain daily snow depths estimated from GPS signal-to-noise ratios (SNRs). This dataset allows water manager to better understand the quantity of winter snowpacks. Use this map to find the name of a site near your water supply."),
+                          h2("Daily Snow Depth Stations"),
+                          h4("This map shows California sites that contain daily snow depths estimated from GPS signal-to-noise ratios (SNRs). This dataset allows water manager to better understand the quantity of winter snowpacks. Use this map to find the name of a site near your water supply."),
                           leafletOutput(outputId = "site_map1")),
                  tabPanel("snow graphs",
                           sidebarLayout(
@@ -59,7 +59,7 @@ ui <- fluidPage(
                                         tabPanel("snow depth: running total", plotOutput(outputId = "snow_plot")),
                                         #tabPanel("mix/max"),
                                         tabPanel("snow depth: annual total", plotOutput(outputId = "wy_total_bar_chart"))),
-                                      p("The 'running total' is the cummulative sum of daily snow accumulation values starting on the first day of the water year (October 1) and end on June 30. This value represents the total amount of snow that has fallen at a given station as of the date on the x-axis."),
+                                      h5("The 'running total' is the cummulative sum of daily snow accumulation values starting on the first day of the water year (October 1) and end on June 30. This value represents the total amount of snow that has fallen at a given station as of the date on the x-axis."),
                                       p("Citation: Larson, K. M. and E. E. Small. 2017. Daily Snow Depth and SWE from GPS Signal-to-Noise Ratios, Version 1. [Indicate subset used]. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. doi: https://doi.org/10.5067/Z02Y1HGNFXCH. [Date Accessed]."))
                           )
                           ),
