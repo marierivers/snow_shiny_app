@@ -60,14 +60,14 @@ ui <- fluidPage(
                                         #tabPanel("mix/max"),
                                         tabPanel("snow depth: annual total", plotOutput(outputId = "wy_total_bar_chart"))),
                                       h5("The 'running total' is the cummulative sum of daily snow accumulation values starting on the first day of the water year (October 1) and end on June 30. This value represents the total amount of snow that has fallen at a given station as of the date on the x-axis."),
-                                      p("Citation: Larson, K. M. and E. E. Small. 2017. Daily Snow Depth and SWE from GPS Signal-to-Noise Ratios, Version 1. [Indicate subset used]. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. doi: https://doi.org/10.5067/Z02Y1HGNFXCH. [Date Accessed]."))
+                                      p("Citation: Larson, K. M. and E. E. Small. 2017. Daily Snow Depth and SWE from GPS Signal-to-Noise Ratios, Version 1. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. doi: https://doi.org/10.5067/Z02Y1HGNFXCH. Accessed: March 5, 2022."))
                           )
                           ),
                  tabPanel("data table",
                           p("" ),
                           # data table
                           DT::dataTableOutput(outputId = "california_data"),
-                          p("Citation: Larson, K. M. and E. E. Small. 2017. Daily Snow Depth and SWE from GPS Signal-to-Noise Ratios, Version 1. [Indicate subset used]. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. doi: https://doi.org/10.5067/Z02Y1HGNFXCH. [Date Accessed]."))
+                          p("Citation: Larson, K. M. and E. E. Small. 2017. Daily Snow Depth and SWE from GPS Signal-to-Noise Ratios, Version 1. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. doi: https://doi.org/10.5067/Z02Y1HGNFXCH. Accessed: March 5, 2022."))
   
 ))
 
