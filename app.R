@@ -156,9 +156,9 @@ server <- function(input, output) {
       theme(text = element_text(size = 18, color = "ivory1"), plot.title.position = "plot", axis.text = element_text(color = "ivory1", face = "bold"), axis.ticks = element_line(color = "ivory1", size = 2)) +
       theme(panel.grid.minor = element_blank(), panel.grid = element_blank(), plot.background = element_rect(fill = "#38a7e7"), panel.background = element_rect(fill = "#38a7e7")) +
       geom_hline(yintercept = median(action_thresholds()$total_snow_wy_m), color = "ivory1", size = 1) +
-      geom_label(aes(x = .5, y = median(action_thresholds()$total_snow_wy_m) + .2, label = "activate groundwater supply"), color = "black", size = 6, hjust = 0) +
+      geom_label(aes(x = .5, y = median(action_thresholds()$total_snow_wy_m) + .2, label = "median annual snow depth"), color = "black", size = 6, hjust = 0) +
       geom_hline(yintercept = quantile(action_thresholds()$total_snow_wy_m, c(0.25)), color = "gold1", size = 1) +
-      geom_label(aes(x = .5, y = quantile(action_thresholds()$total_snow_wy_m, c(0.25)) + .2, label = "implement water conservation measures"), fill = "gold1", color = "black", size = 6, hjust = 0)
+      geom_label(aes(x = .5, y = quantile(action_thresholds()$total_snow_wy_m, c(0.25)) + .2, label = "25th percentile annual snow depth"), fill = "gold1", color = "black", size = 6, hjust = 0)
   })
   
   # map of all sites

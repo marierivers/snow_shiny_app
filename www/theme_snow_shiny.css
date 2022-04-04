@@ -19,16 +19,16 @@
 
 html {
   /*-- Main font sizes --*/
-  --title-size:      50px;
-  --body-size:       1.05rem;
-  --code-size:       14px;
+  --title-size:      40px;
+  --body-size:       1.0rem;
+  --code-size:       12px;
   --aside-size:      12px;
   --fig-cap-size:    12px;
   --line-height: 1;
 
   /*-- Main font colors --*/
-  --title-color:     #18392b; /* blog post titles on blog post page */
-  --header-color:    #18392b; /* blog post titles on main blog page */
+  --title-color:     #36648b; /* blog post titles on blog post page */
+  --header-color:    #36648b; /* blog post titles on main blog page */
   --body-color:      rgba(0, 0, 0, 0.8); /* body text of blog posts*/
   --aside-color:     rgba(0, 0, 0, 0.6);
   --fig-cap-color:   rgba(0, 0, 0, 0.6);
@@ -65,18 +65,18 @@ d-appendix {
 /* These properties only apply to Distill sites and blogs  */
 
 .distill-site-header {
-  --title-size:       16px;
+  --title-size:       14px;
   --text-color:       #ffffff; /* home page header bar text */
-  --text-size:        16px;
+  --text-size:        12px;
   --hover-color:      white; /*hover color for home page header bar text*/
-  --bkgd-color:       #2d6a4f; /* header bar color */
+  --bkgd-color:       #36648b; /* header bar color */
 }
 
 .distill-site-footer {
   --text-color:       #ffffff; /* footer text color */
   --text-size:        12px;
   --hover-color:      #ffffff; /* hover color for link in footer*/
-  --bkgd-color:       #2d6a4f; /* footer backgroup color */
+  --bkgd-color:       #36648b; /* footer backgroup color */
 }
 
 /*-- Additional custom styles --*/
@@ -85,44 +85,44 @@ d-appendix {
 body {
   background-color: #ffffff; /* homepage background color */
   font-family: ; /* update this */
-  color: #18392b; /* update this */
-  font-size: 20px;
+  color: #36648b; /* steelblue4 */
+  font-size: 12px;
 }
 
 h1{ /* my name on homepage*/
-  color: #2d6a4f; /* bottle green */
+  color: #36648b; /* steelblue4 */
   font-weight: 800;
   letter-spacing: 2px;
-  font-size: 18px;
+  font-size: 12px;
 }
 
 h2{
   letter-scacing: 2px;
-  color: #008DD5; /* blue */
-  font-size: 20px;
+  color: #36648b; /* steelblue4 */
+  font-size: 12px;
 }
 
 h3{
   letter-scacing: 2px;
-  color: #5F0A87; /* purple */
-  font-size: 20px;
+  color: #36648b; /* steelblue4 */
+  font-size: 12px;
 }
 
 h4{
   letter-scacing: 2px;
-  color: #18392b; /* phthalo green (dark green) */
-  font-size: 16px;
+  color: #36648b; /* steelblue4 */
+  font-size: 12px;
 }
 
 h5{
-  color: #18392b; /* phthalo green (dark green) */
+  color: #36648b; /* steelblue4 */
   font-size: 16px;
 }
 
 h6{
-  color: #18392b; /* phthalo green (dark green) */
+  color: #36648b; /* steelblue4 */
   text-align: justify;
-  font-size: 14px; /* 6 hashtag header in blog post  */
+  font-size: 12px; /* 6 hashtag header in blog post  */
 }
 
 .distill-site-nav a:hover {
@@ -135,7 +135,7 @@ h6{
 
 /* Buttons on home page */
 .btn-outline-dark {
-    background-color: #2d6a4f;
+    background-color: #36648b;
     color: #ffffff;
     border: 0px;
     /*border-color: black;*/
@@ -143,7 +143,15 @@ h6{
 }
 
 .btn-outline-dark:hover {
-    background-color: #62937c;
+    background-color: #36648b;
     color: #ffffff;
 }
 
+.navbar-default {
+    background-color: #36648b !important;
+}
+
+.navbar-default:hover {
+    background-color: #36648b !important;
+    color: yellow;
+}
