@@ -32,7 +32,7 @@ ui <- fluidPage(
              #theme = shinytheme("cyborg"),
                  tabPanel("site locations",
                           h2("Daily Snow Depth Stations"),
-                          h4("This map shows California sites that contain daily snow depths estimated from GPS signal-to-noise ratios (SNRs). This dataset allows water manager to better understand the quantity of winter snowpacks. Use this map to find the name of a site near your water supply."),
+                          h4("This map shows California sites that contain daily snow depths estimated from GPS signal-to-noise ratios (SNRs). Use the map to find the name of a site near your area of interest."),
                           leafletOutput(outputId = "site_map1")),
                  tabPanel("snow graphs",
                           sidebarLayout(
